@@ -18,6 +18,13 @@ question_number = 0
 score = 0
 gameEnd = False 
 timeleft = 10
+def time_thing(): 
+    global timeleft
+    if timeleft > 0:
+        timeleft = timeleft -1
+    else:
+        gameover()
+clock.schedule_interval(time_thing,1)
 def draw():
     screen.fill("black")
     screen.draw.filled_rect(messegebox,"black")
@@ -35,7 +42,7 @@ def draw():
     screen.draw.textbox(question[3],answer3,color = "white")
     screen.draw.textbox(question[4],answer4,color = "white")
     screen.draw.textbox("skip",skip,color = "white")
-    screen.draw.textbox("20",timebox,color = "white")
+    screen.draw.textbox(str(timeleft),timebox,color = "white")
 def read_question_file(): 
     global questions,total
     file = open("questions.txt ","r")
@@ -47,7 +54,8 @@ def read_question():
     question = questions[question_number].split(",")
 read_question_file()
 read_question()  
-def on_mouse_down(pos):
+def on_mouse_down(pos): 
+    global timeleft , question_number 
     option = 1
     for answer in listthing:
         if answer.collidepoint(pos):
@@ -57,21 +65,27 @@ def on_mouse_down(pos):
                 gameover()
         option = option +1
     if skip.collidepoint(pos):
-        read_question()
+        question_number = question_number + 1
+        timeleft = 10
+        if question_number >= total:
+            gameover()
+        else:
+            read_question()
 def corectanswer():
     global score,question_number,timeleft
     score = score +1 
     question_number = question_number + 1
     timeleft = 10
-    if question_number == total:
+    if question_number >= total:
         gameover()
     else:
         read_question()
 def gameover():
     global gameEnd , question , timeleft
     gameEnd = True 
-    question = ["game over","-","-","-","-","-"]
+    question = ["game over. your score "+ str(score),"-","-","-","-","-"]
     timeleft = 0 
+
 
 
 
